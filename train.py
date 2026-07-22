@@ -24,7 +24,7 @@ def my_app(cfg: DictConfig) -> None:
     # DATASET
     text_encoder = CTCTextEncoder()
     transform = LogMelSpectrogram()
-    data = BaseDataset(json_path=cfg.data, transforms=transform, text_encoder=text_encoder)
+    data = BaseDataset(path_data_dir=cfg.data, transforms=transform, text_encoder=text_encoder)
 
     # MODELS
     model = BaselineModel(n_feats=128, n_tokens=28, fc_hidden=128)
