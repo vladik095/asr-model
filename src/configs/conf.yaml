@@ -1,3 +1,10 @@
-print: True
-data: "data/datasets/librispeech/dev-clean_index.json"
-sample_rate: 16000
+defaults:
+  - model: baseline
+  - _self_
+dataset_param:
+  batch_size: 12
+  data_path: "/home/vladik095/Рабочий стол/pytorch_project_template/data/datasets/librispeech/dev-clean"
+spec_param:
+  sr: 16000
+  n_mels: 128
+

@@ -30,3 +30,6 @@ class CTCTextEncoder:
             prev = t
 
         return result
+    
+    def __len__(self):
+        return len(self.char2idx)

@@ -1,0 +1,5 @@
+_target_: src.models.BaselineModelRNN
+n_feats: 128
+hidden_size: 256
+num_layers: 2
+dropout: 0.15

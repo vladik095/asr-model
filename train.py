@@ -7,6 +7,7 @@ import torch
 import torch.nn as nn
 import torchaudio
 import torchaudio.transforms as T
+from hydra.utils import instantiate
 from omegaconf import DictConfig, OmegaConf
 from torch.utils.data import DataLoader
 from torchmetrics.text import CharErrorRate, WordErrorRate
@@ -19,17 +20,23 @@ from src.transforms import LogMelSpectrogram
 
 
 @hydra.main(version_base=None, config_path="src/configs", config_name="conf")
-def my_app(cfg: DictConfig) -> None:
+def train(cfg: DictConfig) -> None:
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    print(f"Using device: {device}")
 
     # DATASET
     text_encoder = CTCTextEncoder()
-    transform = LogMelSpectrogram()
-    data = BaseDataset(path_data_dir=cfg.data, transforms=transform, text_encoder=text_encoder)
+    transform = LogMelSpectrogram(sample_rate=cfg.spec_param.sr, 
+                                  n_mels=cfg.spec_param.n_mels)
 
+    data = BaseDataset(path_data_dir=cfg.dataset_param.data_path, 
+                       transforms=transform, 
+                       text_encoder=text_encoder)
+    
+    print(cfg.spec_param.sr, cfg.spec_param.n_mels)
     # MODELS
-    # model = BaselineModel(n_feats=128, n_tokens=28, fc_hidden=128)
-    model = BaselineModelRNN(n_feats=128, n_tokens=28, hidden_size=512)
-
+    model = instantiate(cfg.model, n_tokens=len(text_encoder))
+    print(model)
     # TRAIN PARAM
     ctc_loss = nn.CTCLoss(blank=0, zero_infinity=True)
     optimizer = torch.optim.Adam(model.parameters(), lr=3e-3)
@@ -39,12 +46,9 @@ def my_app(cfg: DictConfig) -> None:
     exp = comet_ml.start(project_name="my-awesome-project")
     exp.set_name("model2")
 
-
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    print(f"Using device: {device}")
-
     data_loader = DataLoader(
-        data, batch_size=12, 
+        data, 
+        batch_size=cfg.dataset_param.batch_size, 
         shuffle=True, 
         num_workers=4, 
         collate_fn=collate_fn
@@ -62,4 +66,4 @@ def my_app(cfg: DictConfig) -> None:
 
     trainer.train()
 
-my_app()
+train()
