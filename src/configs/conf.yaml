@@ -1,0 +1,3 @@
+print: True
+data: "data/datasets/librispeech/dev-clean_index.json"
+sample_rate: 16000
