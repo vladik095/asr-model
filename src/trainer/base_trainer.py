@@ -33,13 +33,14 @@ class BaseTrainer:
             })
             for batch_idx, batch in enumerate(p_bar):
                 
+                spectrograms = batch["spectrograms"].to(self.device)
                 spectrogram_length = batch["lens_spectrograms"].to(self.device)
 
                 targets = batch["texts_encode"].to(self.device)
                 target_lengths = batch["lens_texts"].to(self.device)
 
                 
-                output = self.model(batch)
+                output = self.model(spectrograms)
 
                 log_probs = output["log_probs"]
 

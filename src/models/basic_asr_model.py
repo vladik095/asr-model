@@ -26,7 +26,7 @@ class BaselineModel(nn.Module):
             nn.Linear(in_features=fc_hidden, out_features=n_tokens),
         )
 
-    def forward(self, batch):
+    def forward(self, spectrograms):
         """
         Model forward method.
 
@@ -41,11 +41,11 @@ class BaselineModel(nn.Module):
         NET: 
         """
         
-        output = self.net(batch["spectrograms"])
+        output = self.net(spectrograms)
         # print(output.shape)
         log_probs = nn.functional.log_softmax(output, dim=-1)
         # print(log_probs[0], log_probs[0].sum(dim=-1))
-        probs = torch.exp(log_probs)
+        # probs = torch.exp(log_probs)
 
         # print(probs.sum(dim=-1))
         log_probs = log_probs.transpose(0,1)
