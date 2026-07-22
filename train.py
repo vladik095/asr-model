@@ -27,8 +27,8 @@ def my_app(cfg: DictConfig) -> None:
     data = BaseDataset(path_data_dir=cfg.data, transforms=transform, text_encoder=text_encoder)
 
     # MODELS
-    model = BaselineModel(n_feats=128, n_tokens=28, fc_hidden=128)
-    # model = BaselineModelRNN(n_feats=128, n_tokens=28, hidden_size=256)
+    # model = BaselineModel(n_feats=128, n_tokens=28, fc_hidden=128)
+    model = BaselineModelRNN(n_feats=128, n_tokens=28, hidden_size=512)
 
     # TRAIN PARAM
     ctc_loss = nn.CTCLoss(blank=0, zero_infinity=True)

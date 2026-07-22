@@ -34,8 +34,8 @@ class BaselineModelRNN(nn.Module):
             nn.Linear(hidden_size, n_tokens),
         )
 
-    def forward(self, batch):
-        x = batch["spectrograms"]          # (B, T, F)
+    def forward(self, x):
+        # x = batch["spectrograms"]          # (B, T, F)
 
         x = self.prenet(x)
 
