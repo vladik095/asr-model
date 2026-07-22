@@ -25,6 +25,9 @@ def collate_fn(dataset_items):
     pad_specs = pad_sequence(spectrograms,batch_first=True)
     texts_enc = torch.cat(texts_enc)
 
+    lens_specs = torch.tensor(lens_specs, dtype=torch.int32)
+    lens_texts = torch.tensor(lens_texts, dtype=torch.int32)
+
     data = {
         "spectrograms":pad_specs,
         "lens_spectrograms": lens_specs,

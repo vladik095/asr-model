@@ -11,19 +11,21 @@ class BaseTrainer:
                  data_loader,
                  epochs,
                  loss,
-                 writer):
-        self.model = model
+                 writer,
+                 device):
+        self.model = model.to(device)
         self.optimizer = optimizer
         self.data_loader = data_loader
         self.epochs = epochs
         self.loss = loss
         self.writer = writer
+        self.device = device
     
     
     def train(self):
         for epoch in range(self.epochs):
             p_bar = tqdm(self.data_loader, desc=f"Epoch {epoch}/{self.epochs}")
-            # avg_loss = []
+        
             all_params, trainable_params = self.cout_model_params(self.model)
             self.writer.log_parameters({
                 "All params": all_params,
@@ -31,10 +33,10 @@ class BaseTrainer:
             })
             for batch_idx, batch in enumerate(p_bar):
                 
-                spectrogram_length = batch["lens_spectrograms"]
+                spectrogram_length = batch["lens_spectrograms"].to(self.device)
 
-                targets = batch["texts_encode"]
-                target_lengths = batch["lens_texts"]
+                targets = batch["texts_encode"].to(self.device)
+                target_lengths = batch["lens_texts"].to(self.device)
 
                 
                 output = self.model(batch)
@@ -69,7 +71,8 @@ class BaseTrainer:
         trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
         
         return all_params, trainable_params
-
+    
+    # def to_device(self, data_list)
 
 
         

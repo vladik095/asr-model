@@ -40,6 +40,9 @@ def my_app(cfg: DictConfig) -> None:
     exp.set_name("model2")
 
 
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    print(f"Using device: {device}")
+
     data_loader = DataLoader(
         data, batch_size=12, 
         shuffle=True, 
@@ -53,7 +56,8 @@ def my_app(cfg: DictConfig) -> None:
         data_loader=data_loader, 
         epochs=30, 
         loss=ctc_loss, 
-        writer=exp
+        writer=exp,
+        device=device
     )
 
     trainer.train()
