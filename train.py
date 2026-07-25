@@ -27,12 +27,12 @@ def train(cfg: DictConfig) -> None:
 
     # DATASETS
     train_dataset = BaseDataset(
-        path_data_dir=cfg.dataset_param.train_data_path,
+        path_data_dir=cfg.dataset.train_data_path,
         transforms=transform,
         text_encoder=text_encoder,
     )
     val_dataset = BaseDataset(
-        path_data_dir=cfg.dataset_param.val_data_path,
+        path_data_dir=cfg.dataset.val_data_path,
         transforms=transform,
         text_encoder=text_encoder,
     )
@@ -40,7 +40,7 @@ def train(cfg: DictConfig) -> None:
     # DATALOADERS
     train_dataloader = DataLoader(
         train_dataset,
-        batch_size=cfg.dataset_param.batch_size,
+        batch_size=cfg.dataset.batch_size,
         shuffle=True,
         num_workers=4,
         collate_fn=collate_fn,
@@ -48,7 +48,7 @@ def train(cfg: DictConfig) -> None:
 
     val_dataloader = DataLoader(
         val_dataset,
-        batch_size=cfg.dataset_param.batch_size,
+        batch_size=cfg.dataset.batch_size,
         shuffle=True,
         num_workers=4,
         collate_fn=collate_fn,
