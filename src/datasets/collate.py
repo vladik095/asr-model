@@ -11,12 +11,12 @@ def collate_fn(dataset_items):
     lens_texts = []
 
     texts = []
-    
+    # print("S")
     for item in dataset_items:
         texts_enc.append(item["text_encode"])
         lens_texts.append(len(texts_enc[-1]))
-
         spectrograms.append(item["spectrogram"])
+        # print(item["spectrogram"].shape)
         # print("SPEC", item["spectrogram"].shape)
         lens_specs.append(len(spectrograms[-1]))
 

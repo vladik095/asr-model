@@ -2,9 +2,14 @@ defaults:
   - model: baseline
   - _self_
 dataset_param:
-  batch_size: 12
-  data_path: "/home/vladik095/Рабочий стол/pytorch_project_template/data/datasets/librispeech/dev-clean"
+  batch_size: 16
+  train_data_path: "/home/vladik095/Рабочий стол/pytorch_project_template/data/datasets/librispeech/dev-clean"
+  val_data_path: "/home/vladik095/Рабочий стол/pytorch_project_template/data/datasets/librispeech/dev-clean"
 spec_param:
   sr: 16000
   n_mels: 128
-
+trainer:
+  load_checkpoint: False # if true model train else load from checkpoint
+  path_check: "saved"
+  resume_from: "saved" # path to checkpoint model
+  epochs: 3000

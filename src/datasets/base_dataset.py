@@ -13,7 +13,7 @@ class BaseDataset(Dataset):
         self.data_index = []
 
         self._build_data_index(path_data_dir)
-
+        self.data_index = self.data_index[:128]
         self.text_encoder = text_encoder
         self.transforms = transforms
 
@@ -65,3 +65,5 @@ class BaseDataset(Dataset):
                             
                             exmp = {"path_audio": audio_path, "text": text.lower()}
                             self.data_index.append(exmp)
+                            # return
+                # return
