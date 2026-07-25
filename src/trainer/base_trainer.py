@@ -38,12 +38,15 @@ class BaseTrainer:
         self._train_process()
 
     def _train_process(self):
+        parmas, _ = self.cout_model_params(self.model)
+        print("ALL PARAMS: ", parmas)
         for epoch in range(self.start_epoch, self.epochs):
             print("EPOCH: ", epoch + 1)
             self._train_epoch(epoch)
             self._evaluation_epoch(epoch)
-            self.save_checkpoint(epoch)
-            break
+            if epoch != 0 and epoch % 5 == 0:
+                self.save_checkpoint(epoch)
+
             print()
 
     def _train_epoch(self, cur_epoch):
@@ -149,11 +152,11 @@ class BaseTrainer:
                         ],
                     )
 
-    # def cout_model_params(self, model):
-    #     all_params = sum(p.numel() for p in model.parameters())
-    #     trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    def cout_model_params(self, model):
+        all_params = sum(p.numel() for p in model.parameters())
+        trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
 
-    #     return all_params, trainable_params
+        return all_params, trainable_params
 
     def get_pred_text(self, pred_tokens, spectrogram_length):
         decoded = []

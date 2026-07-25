@@ -62,7 +62,7 @@ def train(cfg: DictConfig) -> None:
     # COMMET
     comet_ml.login()
     exp = comet_ml.start(project_name="my-awesome-project")
-    exp.set_name("model2")
+    exp.set_name("random_rnn")
 
     trainer = BaseTrainer(
         model=model,
