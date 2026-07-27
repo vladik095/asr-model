@@ -42,7 +42,7 @@ class DeepSpeech(nn.Module):
 
         packed = pack_padded_sequence(
                 x,
-                lengths=new_spectrogram_length,
+                lengths=new_spectrogram_length.cpu(),
                 batch_first=True,
                 enforce_sorted=False,
         )
