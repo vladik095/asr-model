@@ -10,6 +10,7 @@ from omegaconf import DictConfig, OmegaConf
 from torch.utils.data import DataLoader
 
 from src.datasets import BaseDataset, collate_fn
+from src.models import DeepSpeech
 from src.text_encoder import CTCTextEncoder
 from src.trainer import BaseTrainer
 from src.transforms import LogMelSpectrogram
@@ -55,7 +56,8 @@ def train(cfg: DictConfig) -> None:
     )
 
     # TRAIN PARAM
-    model = instantiate(cfg.model, n_tokens=len(text_encoder))
+    # model = instantiate(cfg.model, n_tokens=len(text_encoder))
+    model = DeepSpeech()
     ctc_loss = nn.CTCLoss(blank=0, zero_infinity=True)
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 

@@ -6,7 +6,7 @@ class LogMelSpectrogram:
     def __init__(
         self,
         sample_rate=16000,
-        n_mels=128,
+        n_mels=80,
     ):
         self.mel = torchaudio.transforms.MelSpectrogram(
             sample_rate=sample_rate,

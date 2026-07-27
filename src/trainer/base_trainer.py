@@ -34,6 +34,8 @@ class BaseTrainer:
 
         self.start_epoch = 0
 
+        self.best_val_wer = 1
+
     def train(self):
         self._train_process()
 
@@ -45,7 +47,8 @@ class BaseTrainer:
             self._train_epoch(epoch)
             self._evaluation_epoch(epoch)
             if epoch != 0 and epoch % 5 == 0:
-                self.save_checkpoint(epoch)
+                name_checkpoint = f"checkpoint_{epoch+1}.pth"
+                self.save_checkpoint(epoch, name_checkpoint)
 
             print()
 
@@ -65,10 +68,11 @@ class BaseTrainer:
             targets = batch["texts_encode"].to(self.device)
             target_lengths = batch["lens_texts"].to(self.device)
 
-            output = self.model(spectrograms)
+            output = self.model(spectrograms, spectrogram_length)
+            # log_probs = output["log_probs"]
             log_probs = output["log_probs"]
-
-            loss = self.loss(log_probs, targets, spectrogram_length, target_lengths)
+            log_probs_length = output["log_probs_length"]
+            loss = self.loss(log_probs, targets, log_probs_length, target_lengths)
 
             self.optimizer.zero_grad()
             loss.backward()
@@ -98,7 +102,7 @@ class BaseTrainer:
 
             wer_metric = WordErrorRate()
             cer_metric = CharErrorRate()
-
+            
             for batch_idx, batch in enumerate(p_bar):
                 spectrograms = batch["spectrograms"].to(self.device)
                 spectrogram_length = batch["lens_spectrograms"].to(self.device)
@@ -151,6 +155,10 @@ class BaseTrainer:
                             "wer",
                         ],
                     )
+            if wer_metric > self.best_val_wer:
+                self.best_val_wer = wer_metric
+                name_checkpoint = "best.pth"
+                self.save_checkpoint(cur_epoch, name_checkpoint)
 
     def cout_model_params(self, model):
         all_params = sum(p.numel() for p in model.parameters())
@@ -168,7 +176,7 @@ class BaseTrainer:
         decoded_texts = ["".join(chars) for chars in decoded_texts]
         return decoded_texts
 
-    def save_checkpoint(self, epoch):
+    def save_checkpoint(self, epoch, name_checkpoint):
         checkpoint_dir = Path(self.config.trainer.path_check)
         checkpoint_dir.mkdir(parents=True, exist_ok=True)
 
@@ -176,9 +184,10 @@ class BaseTrainer:
             "epoch": epoch,
             "model_state_dict": self.model.state_dict(),
             "optimizer_state_dict": self.optimizer.state_dict(),
+            "best_val_wer": self.best_val_wer
         }
 
-        torch.save(checkpoint, checkpoint_dir / f"checkpoint_{epoch+1}.pth")
+        torch.save(checkpoint, checkpoint_dir / name_checkpoint)
 
     def load_checkpoint(self, filename):
         checkpoint_path = Path(self.config.trainer.path_check) / filename
@@ -187,6 +196,7 @@ class BaseTrainer:
         self.model.load_state_dict(checkpoint["model_state_dict"])
         self.optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
         self.start_epoch = checkpoint["epoch"] + 1
+        self.best_val_wer = checkpoint["best_val_wer"]
 
     def resume_train(self, path_model):
         self.load_checkpoint(path_model)

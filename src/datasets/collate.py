@@ -22,7 +22,7 @@ def collate_fn(dataset_items):
 
         texts.append(item["text"])
     
-    pad_specs = pad_sequence(spectrograms,batch_first=True)
+    pad_specs = pad_sequence(spectrograms, batch_first=True)
     texts_enc = torch.cat(texts_enc)
 
     lens_specs = torch.tensor(lens_specs, dtype=torch.int32)
