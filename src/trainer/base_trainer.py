@@ -110,14 +110,17 @@ class BaseTrainer:
                 targets = batch["texts_encode"].to(self.device)
                 target_lengths = batch["lens_texts"].to(self.device)
 
-                output = self.model(spectrograms)
+                
+                output = self.model(spectrograms, spectrogram_length)
+                
                 log_probs = output["log_probs"]
+                log_probs_length = output["log_probs_length"]
 
-                loss = self.loss(log_probs, targets, spectrogram_length, target_lengths)
+                loss = self.loss(log_probs, targets, log_probs_length, target_lengths)
 
                 preds = log_probs.argmax(dim=-1)
                 preds = preds.transpose(0, 1)
-                pred_texts = self.get_pred_text(preds, spectrogram_length)
+                pred_texts = self.get_pred_text(preds, log_probs_length)
 
                 wer_metric.update(pred_texts, batch["text"])
                 cer_metric.update(pred_texts, batch["text"])
