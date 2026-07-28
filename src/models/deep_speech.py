@@ -37,9 +37,9 @@ class DeepSpeech(nn.Module):
         B, C, T, F = x.shape 
 
         x = x.permute(0, 2, 1, 3).reshape(B, T, C * F)
-        self.input_size = C * F
+        
         new_spectrogram_length = self._transform_input_lengths(spectrogram_length)
-
+        print("sss", new_spectrogram_length.max(), x.shape)
         packed = pack_padded_sequence(
                 x,
                 lengths=new_spectrogram_length.cpu(),

@@ -36,8 +36,8 @@ class BaselineModelRNN(nn.Module):
 
     def forward(self, x):
         # x = batch["spectrograms"]          # (Batch, Time, Freqs)
-        print("SHAPE ", x.unsqueeze(1).shape)
-        print(x[0])
+        # print("SHAPE ", x.unsqueeze(1).shape)
+        # print(x[0])
         x = self.prenet(x)
 
         x, _ = self.encoder(x)

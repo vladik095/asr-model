@@ -192,17 +192,17 @@ class BaseTrainer:
 
         torch.save(checkpoint, checkpoint_dir / name_checkpoint)
 
-    def load_checkpoint(self, filename):
-        checkpoint_path = Path(self.config.trainer.path_check) / filename
-        checkpoint = torch.load(checkpoint_path, map_location=self.device)
+    def load_checkpoint(self, path_to_checkpoint):
+        
+        checkpoint = torch.load(path_to_checkpoint, map_location=self.device)
 
         self.model.load_state_dict(checkpoint["model_state_dict"])
         self.optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
         self.start_epoch = checkpoint["epoch"] + 1
         self.best_val_wer = checkpoint["best_val_wer"]
 
-    def resume_train(self, path_model):
-        self.load_checkpoint(path_model)
+    def resume_train(self, path_to_checkpoint):
+        self.load_checkpoint(path_to_checkpoint)
         print("----------------------------------")
         print("The checkpoint loaded successfully")
         print(f"The model will continue training from epoch {self.start_epoch+1}.")
