@@ -150,10 +150,7 @@ class DeepSpeech2(nn.Module):
 
         x = self.classifier(x)
 
-        log_probs = nn.functional.log_softmax(
-            x,
-            dim=-1,
-        )
+        log_probs = nn.functional.log_softmax(x, dim=-1,)
 
         return {
             "log_probs": log_probs.transpose(0, 1),
