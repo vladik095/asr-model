@@ -1,9 +1,7 @@
 import comet_ml
 import hydra
-import numpy as np
 import torch
 import torch.nn as nn
-import torchaudio
 import torchaudio.transforms as T
 from hydra.utils import instantiate
 from omegaconf import DictConfig, OmegaConf
@@ -11,6 +9,7 @@ from torch.utils.data import DataLoader
 
 from src.datasets import BaseDataset, collate_fn
 from src.models import BestDeepSpeech, DeepSpeech, DeepSpeech2
+from src.models.conformer import Conformer
 from src.text_encoder import CTCTextEncoder
 from src.trainer import BaseTrainer
 from src.transforms import LogMelSpectrogram
@@ -37,7 +36,7 @@ def train(cfg: DictConfig) -> None:
         transforms=transform,
         text_encoder=text_encoder,
     )
-    
+
     # DATALOADERS
     train_dataloader = DataLoader(
         train_dataset,
@@ -57,7 +56,17 @@ def train(cfg: DictConfig) -> None:
 
     # TRAIN PARAM
     # model = instantiate(cfg.model, n_tokens=len(text_encoder))
-    model = BestDeepSpeech()
+    # model = BestDeepSpeech()
+    model = Conformer(
+        input_dim=80,
+        num_heads=4,
+        d_model=256,
+        num_layers=10,
+        num_classes=28,
+        depthwise_conv_kernel_size=31,
+        dropout_p=0.1,
+    )
+
     ctc_loss = nn.CTCLoss(blank=0, zero_infinity=True)
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 

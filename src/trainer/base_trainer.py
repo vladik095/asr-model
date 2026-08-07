@@ -69,7 +69,6 @@ class BaseTrainer:
             target_lengths = batch["lens_texts"].to(self.device)
 
             output = self.model(spectrograms, spectrogram_length)
-            # log_probs = output["log_probs"]
             log_probs = output["log_probs"]
             log_probs_length = output["log_probs_length"]
             loss = self.loss(log_probs, targets, log_probs_length, target_lengths)
@@ -80,7 +79,7 @@ class BaseTrainer:
 
             preds = log_probs.argmax(dim=-1)
             preds = preds.transpose(0, 1)
-            pred_texts = self.get_pred_text(preds, spectrogram_length)
+            pred_texts = self.get_pred_text(preds, log_probs_length)
 
             wer_metric.update(pred_texts, batch["text"])
             cer_metric.update(pred_texts, batch["text"])
@@ -158,8 +157,9 @@ class BaseTrainer:
                             "wer",
                         ],
                     )
-            if wer_metric > self.best_val_wer:
-                self.best_val_wer = wer_metric
+            wer = wer_metric.compute().item()
+            if wer < self.best_val_wer:
+                self.best_val_wer = wer
                 name_checkpoint = "best.pth"
                 self.save_checkpoint(cur_epoch, name_checkpoint)
 

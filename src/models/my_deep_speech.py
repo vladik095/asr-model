@@ -1,6 +1,5 @@
 import torch
 from torch import nn
-from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 
 
 class GRUBlock(nn.Module):
@@ -52,7 +51,7 @@ class BestDeepSpeech(nn.Module):
             x (torch.tensor): B T F
         """
         x = x.unsqueeze(1)
-        # print(x.shape)
+
         x = self.conv_layer(x)
         B, C, T, F = x.shape
         x = x.permute(0, 2, 1, 3)
@@ -62,7 +61,6 @@ class BestDeepSpeech(nn.Module):
         x = self.rnn_blocks(x)
 
         x = self.fc(x)
-        # print("SHAPE X: ", transformed_lengths)
         log_probs = torch.nn.functional.log_softmax(x, dim=-1)
 
         return {
@@ -77,6 +75,7 @@ class BestDeepSpeech(nn.Module):
         Returns:
             output_lengths (Tensor): new temporal lengths
         """
+        
         seq_len = input_lengths
         for m in self.conv_layer.modules():
             if isinstance(m, nn.Conv2d):
