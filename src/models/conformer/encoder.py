@@ -91,10 +91,6 @@ class ConformerEncoder(nn.Module):
         input_pad_mask = self._build_pad_mask(output_lengths)
         outputs = self.input_projection(outputs)
 
-        # print("outputs:", outputs.shape)
-        # print("lengths:", output_lengths)
-        # print("mask:", input_pad_mask.shape)
-
         for layer in self.conformer_layers:
             outputs = layer(outputs, input_pad_mask)
 

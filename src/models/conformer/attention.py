@@ -101,21 +101,49 @@ class RelativeMultiHeadAttention(nn.Module):
         return pos_score
 
 
+# class MultiHeadedSelfAttentionModule(nn.Module):
+#     def __init__(self, d_model, num_heads, dropout=0.1):
+#         super().__init__()
+#         self.pos_encoding = RelPositionalEncoding()
+#         self.layer_norm = nn.LayerNorm(d_model)
+#         self.attention = RelativeMultiHeadAttention(d_model, num_heads)
+#         self.dropout = nn.Dropout(dropout)
+
+#     def forward(self, x, mask):
+#         batch_size = x.shape[0]
+#         pos_embedding = self.pos_encoding(x)
+#         pos_embedding = pos_embedding.repeat(batch_size, 1, 1)
+
+#         x = self.layer_norm(x)
+
+#         out = self.attention(x, x, x, pos_embedding=pos_embedding, mask=mask)
+
+#         return out
+    
 class MultiHeadedSelfAttentionModule(nn.Module):
     def __init__(self, d_model, num_heads, dropout=0.1):
         super().__init__()
-        self.pos_encoding = RelPositionalEncoding()
+
         self.layer_norm = nn.LayerNorm(d_model)
-        self.attention = RelativeMultiHeadAttention(d_model, num_heads)
+
+        self.attention = nn.MultiheadAttention(
+            embed_dim=d_model,
+            num_heads=num_heads,
+            dropout=dropout,
+            batch_first=True,
+        )
+
         self.dropout = nn.Dropout(dropout)
 
-    def forward(self, x, mask):
-        batch_size = x.shape[0]
-        pos_embedding = self.pos_encoding(x)
-        pos_embedding = pos_embedding.repeat(batch_size, 1, 1)
-
+    def forward(self, x, mask=None):
         x = self.layer_norm(x)
 
-        out = self.attention(x, x, x, pos_embedding=pos_embedding, mask=mask)
+        out, _ = self.attention(
+            x,
+            x,
+            x,
+            key_padding_mask=mask,
+            need_weights=False,
+        )
 
-        return out
+        return self.dropout(out)
