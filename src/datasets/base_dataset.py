@@ -13,7 +13,7 @@ class BaseDataset(Dataset):
         self.data_index = []
 
         self._build_data_index(path_data_dir)
-        self.data_index = self.data_index[:16]
+        self.data_index = self.data_index[:160]
         self.text_encoder = text_encoder
         self.transforms = transforms
 
