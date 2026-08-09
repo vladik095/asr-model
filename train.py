@@ -61,7 +61,7 @@ def train(cfg: DictConfig) -> None:
         input_dim=80,
         num_heads=4,
         d_model=256,
-        num_layers=3,
+        num_layers=12,
         num_classes=28,
         depthwise_conv_kernel_size=31,
         dropout_p=0.1,
