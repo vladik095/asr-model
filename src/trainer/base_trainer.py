@@ -133,6 +133,19 @@ class BaseTrainer:
                     step=len(self.val_data_loader) * cur_epoch + batch_idx,
                 )
 
+                print("log_probs:", log_probs.shape)
+                print("log_probs_length:", log_probs_length)
+                print("target_lengths:", target_lengths)
+
+                print("unique argmax:",
+                    torch.unique(log_probs.argmax(dim=-1)))
+
+                print("argmax distribution:",
+                    torch.bincount(
+                        log_probs.argmax(dim=-1).flatten(),
+                        minlength=log_probs.shape[-1]
+                    ))
+
                 if batch_idx < 3:
                     examples = []
                     for target, pred in zip(batch["text"], pred_texts):
