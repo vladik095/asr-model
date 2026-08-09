@@ -61,14 +61,14 @@ def train(cfg: DictConfig) -> None:
         input_dim=80,
         num_heads=4,
         d_model=256,
-        num_layers=10,
+        num_layers=3,
         num_classes=28,
         depthwise_conv_kernel_size=31,
         dropout_p=0.1,
     )
 
     ctc_loss = nn.CTCLoss(blank=0, zero_infinity=True)
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+    optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
 
     # COMMET
     comet_ml.login()
