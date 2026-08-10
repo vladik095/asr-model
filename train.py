@@ -71,7 +71,7 @@ def train(cfg: DictConfig) -> None:
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
 
     # COMMET
-    # comet_ml.login()
+    comet_ml.login()
     # exp = comet_ml.start(project_name="my-awesome-project")
     # exp.set_name("my deep speech")
 
