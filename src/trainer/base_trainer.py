@@ -76,7 +76,7 @@ class BaseTrainer:
             self.optimizer.zero_grad()
             loss.backward()
             self.optimizer.step()
-
+            print("PREDS ", log_probs.shape)
             preds = log_probs.argmax(dim=-1)
             preds = preds.transpose(0, 1)
             pred_texts = self.get_pred_text(preds, log_probs_length)

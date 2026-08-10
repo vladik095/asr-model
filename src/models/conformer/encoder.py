@@ -89,6 +89,7 @@ class ConformerEncoder(nn.Module):
         
         outputs, output_lengths = self.conv_subsample(inputs, input_lengths)
         input_pad_mask = self._build_pad_mask(output_lengths)
+
         outputs = self.input_projection(outputs)
 
         for layer in self.conformer_layers:
