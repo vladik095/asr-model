@@ -71,9 +71,24 @@ def train(cfg: DictConfig) -> None:
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
 
     # COMMET
-    comet_ml.login()
-    exp = comet_ml.start(project_name="my-awesome-project")
-    exp.set_name("my deep speech")
+    # comet_ml.login()
+    # exp = comet_ml.start(project_name="my-awesome-project")
+    # exp.set_name("my deep speech")
+
+    if cfg.get("experiment_key") and cfg.trainer.get("resume_training", False):
+        # Продолжаем существующий эксперимент
+        exp = comet_ml.start(
+            project_name="my-awesome-project",
+            mode="get",  # Ключевой параметр!
+            experiment_key=cfg.experiment_key
+        )
+        print(f"✅ Resuming experiment: {cfg.experiment_key}")
+    else:
+        # Создаем новый эксперимент
+        exp = comet_ml.start(project_name="my-awesome-project")
+        exp.set_name("my deep speech")
+        # Сохраняем ключ для будущего использования
+        # print(f"✅ New experiment created: {exp.get_key()}"
 
     trainer = BaseTrainer(
         model=model,
@@ -82,7 +97,7 @@ def train(cfg: DictConfig) -> None:
         val_data_loader=val_dataloader,
         config=cfg,
         loss=ctc_loss,
-        writer=exp,
+        writer=None,
         device=device,
         ctc_decode=text_encoder,
     )
