@@ -93,8 +93,8 @@ class Inferencer:
             text = self.decoder.decode(
                 probs.cpu().numpy(),
                 beam_width=100,
-                alpha=0.5,
-                beta=1.5,
+                # alpha=0.5,
+                # beta=1.5,
             )
 
             decoded_texts.append(text)
