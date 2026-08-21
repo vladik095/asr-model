@@ -1,0 +1,9 @@
+defaults:
+  - model: conformer
+  - dataset: local_train
+  - _self_
+spec_param:
+  sr: 16000
+  n_mels: 80
+inferencer:
+  from_pretrained: "best.pth" # path to the pretrained model

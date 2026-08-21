@@ -1,6 +1,5 @@
 from pathlib import Path
 
-import numpy as np
 import torch
 from torchmetrics.text import CharErrorRate, WordErrorRate
 from tqdm import tqdm
