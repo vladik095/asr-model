@@ -60,6 +60,7 @@ class Inferencer:
             self.config.inferencer.from_pretrained, map_location=self.device
         )
         self.model.load_state_dict(checkpoint["model_state_dict"])
+        self.model.to(self.device) 
 
     def get_pred_text(self, ctc_decoder, pred_tokens, spectrogram_length):
         decoded = []
