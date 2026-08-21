@@ -46,16 +46,24 @@ class Inferencer:
                 log_probs = output["log_probs"]
                 log_probs_length = output["log_probs_length"]
 
-                # preds = log_probs.argmax(dim=-1)
+                preds_max = log_probs.argmax(dim=-1)
                 # preds = self.get_beam_LM_words(log_probs)
                 
-                # preds = preds.transpose(0, 1)
-                # pred_texts = self.get_pred_text(
-                #     self.text_encoder, preds, log_probs_length
-                # )
+                preds_max = preds_max.transpose(0, 1)
+                pred_texts_max = self.get_pred_text(
+                    self.text_encoder, preds_max, log_probs_length
+                )
+                print(pred_texts_max)
+                
 
                 pred_texts = self.get_beam_LM_words(log_probs, log_probs_length)
 
+                for pred, target in zip(pred_texts, batch["text"]):
+                    print("PRED  :", repr(pred))
+                    print("TARGET:", repr(target))
+                    print()
+
+                    
                 wer_metric.update(pred_texts, batch["text"])
                 cer_metric.update(pred_texts, batch["text"])
 
