@@ -5,9 +5,9 @@ class CTCTextEncoder:
     def __init__(self):
         alphabet = list(string.ascii_lowercase + " ")
 
-        vocab = ["<blank>"] + alphabet
+        self.vocab = ["<blank>"] + alphabet
         
-        self.char2idx = {char: idx for idx, char in enumerate(vocab)}
+        self.char2idx = {char: idx for idx, char in enumerate(self.vocab)}
         self.idx2char = {idx: char for char, idx in self.char2idx.items()}
         
     def encode(self, text):
