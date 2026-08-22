@@ -20,15 +20,15 @@ class Inferencer:
         self.dataloader = dataloader
         self.text_encoder = text_encoder
         
-        # labels = [""] + list("abcdefghijklmnopqrstuvwxyz ")
+        labels = [""] + list("abcdefghijklmnopqrstuvwxyz ")
 
-        # self.decoder = build_ctcdecoder(
-        #     labels=labels,               # ["<blank>", "a", ..., "z", " "]
-        #     kenlm_model_path="/kaggle/input/datasets/tuannguyenvananh/librispeech-4gram-language-model/4-gram-librispeech.bin"
-        # )
         self.decoder = build_ctcdecoder(
-            labels=[""] + list("abcdefghijklmnopqrstuvwxyz ")
+            labels=labels,               # ["<blank>", "a", ..., "z", " "]
+            kenlm_model_path="/kaggle/input/datasets/tuannguyenvananh/librispeech-4gram-language-model/4-gram-librispeech.bin"
         )
+        # self.decoder = build_ctcdecoder(
+        #     labels=[""] + list("abcdefghijklmnopqrstuvwxyz ")
+        # )
 
     def run_inference(self):
         self._from_pretraine()
@@ -52,7 +52,7 @@ class Inferencer:
                 # preds_max = log_probs.argmax(dim=-1)
                 # # preds = self.get_beam_LM_words(log_probs)
                 
-                # preds_max = preds_max.transpose(0, 1)
+                log_probs = log_probs.transpose(0, 1)
                 # pred_texts_max = self.get_pred_text(
                 #     self.text_encoder, preds_max, log_probs_length
                 # )
@@ -61,10 +61,10 @@ class Inferencer:
                 pred_texts = self.get_beam_words(log_probs, log_probs_length)
                 # pred_texts = self.get_beam_LM_words(log_probs, log_probs_length)
 
-                for pred, target in zip(pred_texts, batch["text"]):
-                    print("PRED  :", repr(pred))
-                    print("TARGET:", repr(target))
-                    print()
+                # for pred, target in zip(pred_texts, batch["text"]):
+                #     print("PRED  :", repr(pred))
+                #     print("TARGET:", repr(target))
+                #     print()
 
                     
                 wer_metric.update(pred_texts, batch["text"])
@@ -95,33 +95,37 @@ class Inferencer:
         decoded_texts = ["".join(chars) for chars in decoded_texts]
         return decoded_texts
 
-    def get_beam_LM_words(self, log_probs, log_probs_length):
-        decoded_texts = []
+    # def get_beam_LM_words(self, log_probs, log_probs_length):
+    #     decoded_texts = []
 
-        for probs, length in zip(log_probs, log_probs_length):
-            probs = probs[:length]
+    #     for probs, length in zip(log_probs, log_probs_length):
+    #         probs = probs[:length]
+    #         print("PROBS: ", probs)
+    #         print("LEN: ", length)
 
-            text = self.decoder.decode(
-                probs.cpu().numpy(),
-                beam_width=100,
-                # alpha=0.5,
-                # beta=1.5,
-            )
+    #         text = self.decoder.decode(
+    #             probs.cpu().numpy(),
+    #             beam_width=100,
+    #             # alpha=0.5,
+    #             # beta=1.5,
+    #         )
 
-            decoded_texts.append(text)
+    #         decoded_texts.append(text)
 
-        return decoded_texts
+    #     return decoded_texts
     
     def get_beam_words(self, log_probs, log_probs_length):
         decoded_texts = []
-
+        # print("SHAPEK: ", log_probs.shape)
         for probs, length in zip(log_probs, log_probs_length):
             probs = probs[:length]
-
+            # print("PROBS: ", probs, "SHAPE ", probs.shape)
+            # print("LEN: ", length)
             text = self.decoder.decode(
                 probs.cpu().numpy(),
                 beam_width=100,
             )
+            # print(text) 
 
             decoded_texts.append(text)
 
